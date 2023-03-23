@@ -14,8 +14,7 @@ class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
     pagination_class = LimitOffsetPagination
-    
-    
+
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
@@ -39,11 +38,11 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = (AuthorOrReadOnly,)
-    
+
     def get_permissions(self):
         if self.action == 'retrieve':
             return (ReadOnly(),)
-        return super().get_permissions() 
+        return super().get_permissions()
 
     def get_queryset(self):
         post = Post.objects.get(pk=self.kwargs.get('post_id'))
@@ -78,6 +77,6 @@ class FollowViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = Follow.objects.filter(user=self.request.user)
         return queryset
-    
+
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
