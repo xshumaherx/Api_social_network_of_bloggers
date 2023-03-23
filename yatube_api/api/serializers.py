@@ -31,8 +31,6 @@ class Base64ImageField(serializers.ImageField):
 class PostSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(read_only=True,
                                           slug_field='username',)
-    #group = serializers.SlugRelatedField(slug_field='slug',
-    #                                     read_only=True,)
     image = Base64ImageField(required=False, allow_null=True)
     class Meta:
         model = Post
@@ -60,10 +58,22 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class FollowSerializer(serializers.ModelSerializer):
-    following = serializers.SlugRelatedField(read_only=True,
+    following = serializers.SlugRelatedField(queryset=User.objects.all(),
                                              slug_field='username',)
     user = serializers.SlugRelatedField(read_only=True,
                                         slug_field='username',)
     class Meta:
         model = Follow
         fields = ('user','following',)
+
+    def validate(self, data):
+        if self.context['request'].user == data.get('following'):
+            raise serializers.ValidationError(
+                'На себя нельзя подписаться'
+            )
+        if Follow.objects.filter(user=self.context['request'].user, 
+                                 following=data['following']).exists():
+            raise serializers.ValidationError(
+                'Вы уже подписаны на этого автора.'
+            )
+        return data
