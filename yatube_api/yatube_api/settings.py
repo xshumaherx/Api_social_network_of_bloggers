@@ -91,8 +91,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = ((BASE_DIR / 'static/'),)
 
 REST_FRAMEWORK = {
-    #'DEFAULT_PAGINATION_CLASS': 'api.pagination.PostsPagination',
-    #'PAGE_SIZE': 5,
+    #'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    #'PAGE_SIZE': 10,
 
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
@@ -100,10 +100,6 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
-    #'DEFAULT_THROTTLE_CLASSES': [
-    #    'rest_framework.throttling.UserRateThrottle',
-    #    'rest_framework.throttling.AnonRateThrottle',
-    #],
 }
 
 MEDIA_URL = '/media/'

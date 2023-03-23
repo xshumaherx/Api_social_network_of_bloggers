@@ -3,7 +3,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from posts.models import Follow, Group, Post, User
 from rest_framework import filters, viewsets
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import (IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
 
 from .pagination import PostsPagination
 from .permissions import AuthorOrReadOnly, ReadOnly
@@ -74,23 +75,18 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 class FollowViewSet(viewsets.ModelViewSet):
     queryset = Follow.objects.all()
     serializer_class = FollowSerializer
-    #filter_backends = (filters.SearchFilter,)
-    #pagination_class = None
-    #search_fields = ('$following',)
-    #permission_classes = (IsAuthenticated,)
-    #filter_backends = (filters.SearchFilter,)
-    #search_fields = ('$follow',)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('$following__username',)
 
-    """ def get_queryset(self):
-        queryset = Follow.objects.get(pk=self.kwargs.get('user_id'))
-        return queryset.objects.all() """
+
+    def get_queryset(self):
+        queryset = Follow.objects.filter(user=self.request.user)
+        return queryset
     
     """ def get_permissions(self):
         if self.action == 'retrieve':
             return (ReadOnly(),)
         return super().get_permissions()  """
     
-    #def perform_create(self, serializer):
-        #serializer.save(user=self.request.user)
-        #post = Post.objects.get(pk=self.kwargs.get("post_id"))
-        #serializer.save(author=self.request.user, post=post)
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
