@@ -52,4 +52,13 @@ class Follow(models.Model):
                                   related_name="following")
 
     class Meta:
-        unique_together = ("user", "following")
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'following'],
+                name='unique_follow'
+            ),
+            models.CheckConstraint(
+                check=~models.Q(user=models.F('following')),
+                name='check_not_self_follow'
+            ),
+        ]
