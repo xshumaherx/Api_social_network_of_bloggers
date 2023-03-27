@@ -1,4 +1,3 @@
-from django.core.exceptions import PermissionDenied
 from posts.models import Follow, Group, Post, User
 from rest_framework import filters, viewsets, mixins
 from rest_framework.pagination import LimitOffsetPagination
